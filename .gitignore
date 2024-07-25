@@ -1,0 +1,8 @@
+/build
+/vendor
+/.idea
+.php-cs-fixer.cache
+.phpunit.result.cache
+.phpunit.cache
+composer.lock
+phpunit.xml.bak
