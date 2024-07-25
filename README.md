@@ -38,11 +38,13 @@ That's it.
 
 Tokens are persisted in your application Cache using a randomly generated key and a default prefix. 
 
-By default, Token Action will use the default Laravel cache. You may set a custom cache using the `TOKEN_ACTION_STORE` environment variable.
+By default, Token Action will use the default Laravel cache. You may set a custom cache using the `TOKEN_ACTION_STORE` environment variable, for example, to use a persistent cache (like `database`, `file` or `redis`) instead of ephemeral ones like `memcache` or `array`. 
 
 ```dotenv
 TOKEN_ACTION_STORE=file
 ```
+
+Tokens have a number of "tries" available. When a token reaches 0 tries, is deleted from the cache.
 
 ## Creating Tokens
 
@@ -88,6 +90,8 @@ use Laragear\TokenAction\Facades\Token;
 
 $token = Token::tries(2)->until('tomorrow');
 ```
+
+Tokens can later be [_consumed more than once_](#consuming-more-than-once).
 
 ### Payloads
 
@@ -260,7 +264,7 @@ Route::get('{party}/confirm', function (Party $party) {
 })->middleware('token.validate');
 ```
 
-On the other hand, the `token.consume` middleware automatically consumes a token from the parameters URL once a successful response is returned. In other words, if the response is an error or a redirection, the token is consumed.
+On the other hand, the `token.consume` middleware automatically consumes a token from the parameters URL once a successful response is returned. In other words, if the response is successful (HTTP 2XX) or a redirection (HTTP 3XX), the token is consumed.
 
 This should be used, for example, when receiving a form submission from the frontend.
 
@@ -406,7 +410,6 @@ Route::get('invite', function () {
 })->middleware(TokenValidateMiddleware::class)
 ```
 
-
 ### Route binding key 
 
 ```php
@@ -439,7 +442,7 @@ Users may swap an invalid token with a valid one in the URL to bypass token veri
 - Use the [Token payload](#payloads) to validate the data before proceeding.
 - Use a [signed route](https://laravel.com/docs/11.x/urls#signed-urls) to avoid changing the URL parameters.
 
-Depending on the action being used with the Token, one could better than the other.
+Depending on the action being used with the Token, one could better than the other. For example, if you expect high request volume, the signed route could be great to not hit the application cache or database. On the other hand, the Token payload can be a great solution if you need complex or private information not suited for a URL Query and always get correct data.
 
 # License
 
