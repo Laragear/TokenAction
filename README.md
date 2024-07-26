@@ -13,7 +13,7 @@ use Laragear\TokenAction\Facades\Token;
 
 $token = Token::until('tomorrow');
 
-return "Confirm the invite using this code: $token->value";
+return "Confirm the invite using this code: $token";
 ```
 
 Use them for one-time actions like confirming invites or voting, which after consumed are no longer valid.
