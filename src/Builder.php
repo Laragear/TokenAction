@@ -5,6 +5,8 @@ namespace Laragear\TokenAction;
 use Carbon\CarbonImmutable;
 use Closure;
 use DateTimeInterface;
+use Illuminate\Support\Traits\Conditionable;
+use Illuminate\Support\Traits\Tappable;
 use Laragear\TokenAction\Exceptions\TokenNotFound;
 use ValueError;
 use function is_int;
@@ -12,6 +14,9 @@ use function value;
 
 class Builder
 {
+    use Conditionable;
+    use Tappable;
+
     /**
      * Create a new Builder instance.
      */
