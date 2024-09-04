@@ -214,7 +214,7 @@ class Store
      */
     protected function restoreModel(ModelIdentifier $value): Model
     {
-        return $this->getQueryForModelRestoration( // @phpstan-ignore-line
+        return $this->getQueryForModelRestoration(
             (new $value->class)->setConnection($value->connection), $value->id
         )->useWritePdo()->firstOrFail()->load($value->relations ?? []); // @phpstan-ignore-line
     }

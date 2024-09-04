@@ -10,6 +10,7 @@ use Laragear\TokenAction\Builder;
  * @method static \Laragear\TokenAction\Builder action(string $action)
  * @method static \Laragear\TokenAction\Builder tries(int $tries)
  * @method static \Laragear\TokenAction\Builder with(mixed $with)
+ * @method static \Laragear\TokenAction\Builder as(\Closure|string $as)
  * @method static \Laragear\TokenAction\Token until(\DateTimeInterface|int|string $expires)
  * @method static \Laragear\TokenAction\Token|null find(string $id)
  * @method static \Laragear\TokenAction\Token findOrFail(string $id)

@@ -324,7 +324,16 @@ Route::post('{party}/confirm', function (Request $request, Party $party) {
 
 ## ID Generator
 
-By default, a token ID is an ULID, created by [`Str::ulid()`](https://laravel.com/docs/11.x/strings#method-str-ulid). You can change it for anything by setting the `Token::$generator` static property the `boot()` method of your `AppServiceProvider`.
+By default, a token ID is an ULID, created by [`Str::ulid()`](https://laravel.com/docs/11.x/strings#method-str-ulid). You can change it for anything by using the `as()` method at runtime. It accepts a string, or a Closure that returns a string.
+
+```php
+use Laragear\TokenAction\Facades\Token;
+use Illuminate\Support\Str;
+
+$token = Token::store('redis')->as(Str::random(32))->until(60);
+```
+
+Alternatively, you may use the `Token::$generator` static property the `boot()` method of your `AppServiceProvider` with a Closure that returns a random string.
 
 ```php
 namespace App\Providers;
@@ -341,6 +350,10 @@ class AppServiceProvider extends ServiceProvider
     }
 }
 ```
+
+> [!NOTE]
+> 
+> The string to generate will be [prefixed](#cache) to avoid cache key collisions.
 
 ## Configuration
 
