@@ -3,10 +3,12 @@
 namespace Laragear\TokenAction;
 
 use Carbon\CarbonImmutable;
+use Closure;
 use DateTimeInterface;
 use Laragear\TokenAction\Exceptions\TokenNotFound;
 use ValueError;
 use function is_int;
+use function value;
 
 class Builder
 {
@@ -18,6 +20,7 @@ class Builder
         protected DateTimeInterface|int|string|null $expires = null,
         protected int $tries = 1,
         protected mixed $with = null,
+        protected Closure|string|null $as = null
     )
     {
         //
@@ -45,7 +48,7 @@ class Builder
         $this->tries = $tries;
 
         if ($this->tries < 1) {
-            throw new ValueError("Cannot assign less than 1 tries to a Token.");
+            throw new ValueError('Cannot assign less than 1 tries to a Token.');
         }
 
         return $this;
@@ -59,6 +62,19 @@ class Builder
     public function with(mixed $with): static
     {
         $this->with = $with;
+
+        return $this;
+    }
+
+    /**
+     * The token ID that should be used to store it, without prefix.
+     *
+     * @param  (\Closure():string)|string  $token
+     * @return $this
+     */
+    public function as(Closure|string $token): static
+    {
+        $this->as = $token;
 
         return $this;
     }
@@ -90,8 +106,15 @@ class Builder
      */
     protected function generateTokenId(): string
     {
-        return (Token::$generator)()
-            ?: throw new ValueError('The Token ID generator should return a non-empty string.');
+        if ($this->as) {
+            return value($this->as);
+        }
+
+        if (isset(Token::$generator)) {
+            return (Token::$generator)();
+        }
+
+        throw new ValueError('The Token ID generator is not set.');
     }
 
     /**

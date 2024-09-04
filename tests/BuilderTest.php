@@ -86,6 +86,24 @@ class BuilderTest extends TestCase
         $this->builder->with(true)->until(now());
     }
 
+    public function test_as(): void
+    {
+        $this->store->expects('put')->withArgs(static function (Token $token): bool {
+            return 'test-id' === $token->id;
+        });
+
+        $this->builder->as('test-id')->until(now());
+    }
+
+    public function test_as_with_closure(): void
+    {
+        $this->store->expects('put')->withArgs(static function (Token $token): bool {
+            return 'test-id' === $token->id;
+        });
+
+        $this->builder->as(fn() => 'test-id')->until(now());
+    }
+
     public function test_until_given_datetime(): void
     {
         $until = now()->addMinute();
