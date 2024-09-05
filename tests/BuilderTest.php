@@ -14,14 +14,14 @@ use function now;
 
 class BuilderTest extends TestCase
 {
-    protected Store&Mockery\MockInterface $store;
+    protected Mockery\MockInterface|Store $store;
     protected Builder $builder;
 
     protected function setUp(): void
     {
         $this->afterApplicationCreated(function () {
-            $this->store = Mockery::mock(Store::class);
-            $this->builder = new Builder($this->store);
+            $this->store = $this->mock(Store::class);
+            $this->builder = $this->app->make(Builder::class);
             $this->freezeSecond();
         });
 

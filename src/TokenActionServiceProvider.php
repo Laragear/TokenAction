@@ -23,11 +23,12 @@ class TokenActionServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(static::CONFIG, 'token-action');
 
         $this->app->singleton(Store::class, static function (Application $app): Store {
+            /** @var \Illuminate\Contracts\Config\Repository $config */
             $config = $app->make('config');
 
             return new Store(
                 $app->make('cache'),
-                $config->get('token-action.store'),
+                $config->get('token-action.default'),
                 $config->get('token-action.prefix'),
             );
         });

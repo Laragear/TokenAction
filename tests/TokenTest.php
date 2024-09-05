@@ -10,12 +10,12 @@ use UnexpectedValueException;
 
 class TokenTest extends TestCase
 {
-    protected Store&Mockery\MockInterface $store;
+    protected Mockery\MockInterface|Store $store;
 
     protected function setUp(): void
     {
         $this->afterApplicationCreated(function (): void {
-            $this->store = Mockery::mock(Store::class);
+            $this->store = $this->mock(Store::class);
         });
 
         parent::setUp();
