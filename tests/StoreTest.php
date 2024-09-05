@@ -20,16 +20,16 @@ use function now;
 
 class StoreTest extends TestCase
 {
-    protected Repository&Mockery\MockInterface $cacheStore;
-    protected FactoryContract&Mockery\MockInterface $cache;
+    protected Mockery\MockInterface|Repository $cacheStore;
+    protected Mockery\MockInterface|FactoryContract $cache;
     protected Store $store;
 
     protected function setUp(): void
     {
         $this->afterApplicationCreated(function () {
-            $this->cacheStore = Mockery::mock(Repository::class);
-            $this->cache = Mockery::mock(FactoryContract::class);
-            $this->store = new Store($this->cache, null, 'test_prefix');
+            $this->cacheStore = $this->mock(Repository::class);
+            $this->cache = $this->app->instance('cache', $this->mock(FactoryContract::class));
+            $this->store = $this->app->make(Store::class);
 
             $this->freezeSecond();
         });
@@ -37,11 +37,41 @@ class StoreTest extends TestCase
         parent::setUp();
     }
 
-    public function test_uses_custom_store(): void
+    public function test_uses_config_store(): void
     {
+        $this->app->make('config')->set('token-action.default', 'test_store');
+
+        $this->cacheStore->expects('getMultiple')
+            ->with(['token-action|test_id', 'token-action|test_id:tries'])
+            ->andReturn(['token-action|test_id' => null, 'token-action|test_id:tries' => null]);
+
+        $this->app->forgetInstance(Store::class);
+
+        $this->cache->expects('store')->with('test_store')->andReturn($this->cacheStore);
+
+        static::assertNull($this->app->make(Store::class)->get('test_id'));
+    }
+
+    public function test_uses_config_prefix(): void
+    {
+        $this->app->make('config')->set('token-action.prefix', 'test_prefix');
+
         $this->cacheStore->expects('getMultiple')
             ->with(['test_prefix|test_id', 'test_prefix|test_id:tries'])
             ->andReturn(['test_prefix|test_id' => null, 'test_prefix|test_id:tries' => null]);
+
+        $this->app->forgetInstance(Store::class);
+
+        $this->cache->expects('store')->with(null)->andReturn($this->cacheStore);
+
+        static::assertNull($this->app->make(Store::class)->get('test_id'));
+    }
+
+    public function test_uses_custom_store(): void
+    {
+        $this->cacheStore->expects('getMultiple')
+            ->with(['token-action|test_id', 'token-action|test_id:tries'])
+            ->andReturn(['token-action|test_id' => null, 'token-action|test_id:tries' => null]);
 
         $this->cache->expects('store')->with('test_store')->andReturn($this->cacheStore);
 
@@ -52,13 +82,13 @@ class StoreTest extends TestCase
     {
         $this->cacheStore
             ->expects('getMultiple')
-            ->with(['test_prefix|test_id', 'test_prefix|test_id:tries'])
+            ->with(['token-action|test_id', 'token-action|test_id:tries'])
             ->andReturn([
-                'test_prefix|test_id' => [
+                'token-action|test_id' => [
                     'payload' => null,
                     'expires_at' => now()->getTimestamp()
                 ],
-                'test_prefix|test_id:tries' => 1
+                'token-action|test_id:tries' => 1
             ]);
 
         $this->cache->expects('store')->with(null)->andReturn($this->cacheStore);
@@ -75,10 +105,10 @@ class StoreTest extends TestCase
     {
         $this->cacheStore
             ->expects('getMultiple')
-            ->with(['test_prefix|test_id', 'test_prefix|test_id:tries'])
+            ->with(['token-action|test_id', 'token-action|test_id:tries'])
             ->andReturn([
-                'test_prefix|test_id' => null,
-                'test_prefix|test_id:tries' => null
+                'token-action|test_id' => null,
+                'token-action|test_id:tries' => null
             ]);
 
         $this->cache->expects('store')->with(null)->andReturn($this->cacheStore);
@@ -90,16 +120,16 @@ class StoreTest extends TestCase
     {
         $this->cacheStore
             ->expects('getMultiple')
-            ->with(['test_prefix|test_id', 'test_prefix|test_id:tries'])
+            ->with(['token-action|test_id', 'token-action|test_id:tries'])
             ->andReturn([
-                'test_prefix|test_id' => [
+                'token-action|test_id' => [
                     'payload' => null,
                     'expires_at' => now()->getTimestamp()
                 ],
-                'test_prefix|test_id:tries' => 0
+                'token-action|test_id:tries' => 0
             ]);
 
-        $this->cacheStore->expects('deleteMultiple')->with(['test_prefix|test_id', 'test_prefix|test_id:tries']);
+        $this->cacheStore->expects('deleteMultiple')->with(['token-action|test_id', 'token-action|test_id:tries']);
 
         $this->cache->expects('store')->with(null)->twice()->andReturn($this->cacheStore);
 
@@ -110,16 +140,16 @@ class StoreTest extends TestCase
     {
         $this->cacheStore
             ->expects('getMultiple')
-            ->with(['test_prefix|test_id', 'test_prefix|test_id:tries'])
+            ->with(['token-action|test_id', 'token-action|test_id:tries'])
             ->andReturn([
-                'test_prefix|test_id' => [
+                'token-action|test_id' => [
                     'payload' => null,
                     'expires_at' => now()->getTimestamp()
                 ],
-                'test_prefix|test_id:tries' => -1
+                'token-action|test_id:tries' => -1
             ]);
 
-        $this->cacheStore->expects('deleteMultiple')->with(['test_prefix|test_id', 'test_prefix|test_id:tries']);
+        $this->cacheStore->expects('deleteMultiple')->with(['token-action|test_id', 'token-action|test_id:tries']);
 
         $this->cache->expects('store')->with(null)->twice()->andReturn($this->cacheStore);
 
@@ -131,11 +161,11 @@ class StoreTest extends TestCase
         $token = new Token($this->store, now()->addMinute()->toImmutable(), 'test_id', 10);
 
         $this->cacheStore->expects('setMultiple')->with([
-            'test_prefix|test_id' => [
+            'token-action|test_id' => [
                 'payload' => null,
                 'expires_at' => $token->expiresAt->getTimestamp()
             ],
-            'test_prefix|test_id:tries' => 10
+            'token-action|test_id:tries' => 10
         ], Mockery::type(DateInterval::class));
 
         $this->cache->expects('store')->with(null)->andReturn($this->cacheStore);
@@ -148,11 +178,11 @@ class StoreTest extends TestCase
         $token = new Token($this->store, now()->addMinute()->toImmutable(), 'test_id', 10, true);
 
         $this->cacheStore->expects('setMultiple')->with([
-            'test_prefix|test_id' => [
+            'token-action|test_id' => [
                 'payload' => true,
                 'expires_at' => $token->expiresAt->getTimestamp()
             ],
-            'test_prefix|test_id:tries' => 10
+            'token-action|test_id:tries' => 10
         ], Mockery::type(DateInterval::class));
 
         $this->cache->expects('store')->with(null)->andReturn($this->cacheStore);
@@ -164,7 +194,7 @@ class StoreTest extends TestCase
     {
         $token = new Token($this->store, now()->addMinute()->toImmutable(), 'test_id', 10, true);
 
-        $this->cacheStore->expects('deleteMultiple')->with(['test_prefix|test_id', 'test_prefix|test_id:tries']);
+        $this->cacheStore->expects('deleteMultiple')->with(['token-action|test_id', 'token-action|test_id:tries']);
 
         $this->cache->expects('store')->with(null)->andReturn($this->cacheStore);
 
@@ -173,7 +203,7 @@ class StoreTest extends TestCase
 
     public function test_destroys_token_by_its_id(): void
     {
-        $this->cacheStore->expects('deleteMultiple')->with(['test_prefix|test_id', 'test_prefix|test_id:tries']);
+        $this->cacheStore->expects('deleteMultiple')->with(['token-action|test_id', 'token-action|test_id:tries']);
 
         $this->cache->expects('store')->with(null)->andReturn($this->cacheStore);
 
@@ -182,7 +212,7 @@ class StoreTest extends TestCase
 
     public function test_consumes(): void
     {
-        $this->cacheStore->expects('decrement')->with('test_prefix|test_id:tries', 1);
+        $this->cacheStore->expects('decrement')->with('token-action|test_id:tries', 1);
 
         $this->cache->expects('store')->with(null)->andReturn($this->cacheStore);
 
@@ -193,7 +223,7 @@ class StoreTest extends TestCase
     {
         $token = new Token($this->store, now()->addMinute()->toImmutable(), 'test_id', 10, true);
 
-        $this->cacheStore->expects('decrement')->with('test_prefix|test_id:tries', 1);
+        $this->cacheStore->expects('decrement')->with('token-action|test_id:tries', 1);
 
         $this->cache->expects('store')->with(null)->andReturn($this->cacheStore);
 
@@ -217,7 +247,7 @@ class StoreTest extends TestCase
 
         $this->cacheStore->expects('setMultiple')->withArgs(function (array $keys): bool {
             /** @var \Illuminate\Contracts\Database\ModelIdentifier $identifier */
-            $identifier = $keys['test_prefix|test_id']['payload'];
+            $identifier = $keys['token-action|test_id']['payload'];
 
             static::assertInstanceOf(ModelIdentifier::class, $identifier);
             static::assertSame(User::class, $identifier->class);
@@ -236,13 +266,13 @@ class StoreTest extends TestCase
     {
         $identifier = new ModelIdentifier(User::class, 1, [], null, null);
 
-        $this->cacheStore->expects('getMultiple')->with(['test_prefix|test_id', 'test_prefix|test_id:tries'])
+        $this->cacheStore->expects('getMultiple')->with(['token-action|test_id', 'token-action|test_id:tries'])
             ->andReturn([
-                'test_prefix|test_id' => [
+                'token-action|test_id' => [
                     'payload' => $identifier,
                     'expires_at' => now()->getTimestamp()
                 ],
-                'test_prefix|test_id:tries' => 1
+                'token-action|test_id:tries' => 1
             ]);
 
         $this->cache->expects('store')->with(null)->andReturn($this->cacheStore);
@@ -294,7 +324,7 @@ class StoreTest extends TestCase
 
         $this->cacheStore->expects('setMultiple')->withArgs(function (array $keys): bool {
             /** @var \Illuminate\Contracts\Database\ModelIdentifier $identifier */
-            $identifier = $keys['test_prefix|test_id']['payload'];
+            $identifier = $keys['token-action|test_id']['payload'];
 
             static::assertInstanceOf(ModelIdentifier::class, $identifier);
             static::assertSame(User::class, $identifier->class);
@@ -313,13 +343,13 @@ class StoreTest extends TestCase
     {
         $identifier = new ModelIdentifier(User::class, [1], [], null, null);
 
-        $this->cacheStore->expects('getMultiple')->with(['test_prefix|test_id', 'test_prefix|test_id:tries'])
+        $this->cacheStore->expects('getMultiple')->with(['token-action|test_id', 'token-action|test_id:tries'])
             ->andReturn([
-                'test_prefix|test_id' => [
+                'token-action|test_id' => [
                     'payload' => $identifier,
                     'expires_at' => now()->getTimestamp()
                 ],
-                'test_prefix|test_id:tries' => 1
+                'token-action|test_id:tries' => 1
             ]);
 
         $this->cache->expects('store')->with(null)->andReturn($this->cacheStore);
