@@ -130,13 +130,13 @@ class Store
             return (new ModelIdentifier(
                 $value->getQueueableClass(), $value->getQueueableIds(), [], $value->getQueueableConnection()
             ))->useCollectionClass(
-                ($collectionClass = get_class($value)) !== EloquentCollection::class ? $collectionClass : null
+                ($collectionClass = get_class($value)) !== EloquentCollection::class ? $collectionClass : null // @phpstan-ignore-line
             );
         }
 
         if ($value instanceof QueueableEntity) {
             return new ModelIdentifier(
-                get_class($value), $value->getQueueableId(), [], $value->getQueueableConnection()
+                get_class($value), $value->getQueueableId(), [], $value->getQueueableConnection() // @phpstan-ignore-line
             );
         }
 
@@ -191,11 +191,11 @@ class Store
         }
         // @codeCoverageIgnoreEnd
 
-        $collection = $collection->keyBy(static function (Model $model): int|string {
+        $collection = $collection->keyBy(static function (Model $model): int|string { // @phpstan-ignore-line
             return $model->getKey();
         });
 
-        /** @var \Illuminate\Support\Collection $collectionClass */
+        /** @var class-string $collectionClass */
         $collectionClass = get_class($collection);
 
         return new $collectionClass(
