@@ -196,7 +196,7 @@ class Store
         });
 
         /** @var class-string $collectionClass */
-        $collectionClass = get_class($collection); // @phpstan-ignore-line
+        $collectionClass = get_class($collection);
 
         return new $collectionClass(
             Collection::make($value->id)->map(static function ($id) use ($collection): mixed {
