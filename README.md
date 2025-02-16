@@ -423,7 +423,7 @@ Route::get('invite', function () {
 })->middleware(TokenValidateMiddleware::class)
 ```
 
-### Route binding key 
+### Route binding key
 
 ```php
 return [
