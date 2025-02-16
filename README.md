@@ -24,6 +24,10 @@ Use them for one-time actions like confirming invites or voting, which after con
 
 Your support allows me to keep this package free, up-to-date and maintainable. Alternatively, you can **spread the word on social media**.
 
+## Requirements
+
+* Laravel 11 or later.
+
 ## Installation
 
 Fire up Composer and require this package in your project.
