@@ -23,18 +23,17 @@
         "issues": "https://github.com/Laragear/TokenAction/issues"
     },
     "require": {
-        "php": "^8.1",
         "ext-json": "*",
         "laragear/meta": "^3.1",
-        "illuminate/config": "10.*|11.*",
-        "illuminate/support": "10.*|11.*",
-        "illuminate/queue": "10.*|11.*",
-        "illuminate/database": "10.*|11.*",
-        "illuminate/filesystem": "10.*|11.*"
+        "illuminate/config": "11.*|12.*",
+        "illuminate/support": "11.*|12.*",
+        "illuminate/queue": "11.*|12.*",
+        "illuminate/database": "11.*|12.*",
+        "illuminate/filesystem": "11.*|12.*"
     },
     "require-dev": {
-        "laragear/meta-testing": "2.*",
-        "orchestra/testbench": "8.*|9.*"
+        "laragear/meta-testing": "3.*",
+        "orchestra/testbench": "9.*|10.*"
     },
     "autoload": {
         "psr-4": {
