@@ -1,8 +1,8 @@
 # Token Action
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/laragear/token-action.svg)](https://packagist.org/packages/laragear/token-action)
 [![Latest stable test run](https://github.com/Laragear/TokenAction/workflows/Tests/badge.svg)](https://github.com/Laragear/TokenAction/actions)
-[![Codecov coverage](https://codecov.io/gh/Laragear/TokenAction/graph/badge.svg?token=YjJpdKrUCr)](https://codecov.io/gh/Laragear/TokenAction)
-[![Maintainability](https://api.codeclimate.com/v1/badges/a6b0648c0ba5bd0b4147/maintainability)](https://codeclimate.com/github/Laragear/TokenAction/maintainability)
+[![Codecov Coverage](https://codecov.io/gh/Laragear/TokenAction/graph/badge.svg?token=YjJpdKrUCr)](https://codecov.io/gh/Laragear/TokenAction)
+[![Maintainability](https://qlty.sh/badges/182c5742-e08b-4049-9624-2bc6980869d9/maintainability.svg)](https://qlty.sh/gh/Laragear/projects/TokenAction)
 [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=Laragear_TokenAction&metric=alert_status)](https://sonarcloud.io/dashboard?id=Laragear_TokenAction)
 [![Laravel Octane Compatibility](https://img.shields.io/badge/Laravel%20Octane-Compatible-success?style=flat&logo=laravel)](https://laravel.com/docs/11.x/octane#introduction)
 
