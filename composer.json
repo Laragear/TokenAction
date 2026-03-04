@@ -32,7 +32,7 @@
         "illuminate/filesystem": "11.*|12.*"
     },
     "require-dev": {
-        "laragear/meta-testing": "3.*",
+        "laragear/meta-testing": "3.* || 4.*",
         "orchestra/testbench": "9.*|10.*"
     },
     "autoload": {
