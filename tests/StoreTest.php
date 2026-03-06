@@ -281,7 +281,8 @@ class StoreTest extends TestCase
         $builder->expects('from')->with('users')->times(3)->andReturnSelf();
         $builder->expects('where')->with('users.id', '=', 1)->andReturnSelf();
         $builder->expects('useWritePdo')->andReturnSelf();
-        $builder->expects('take')->with(1)->andReturnSelf();
+        $builder->expects('limit')->with(1)->zeroOrMoreTimes()->andReturnSelf();
+        $builder->expects('take')->with(1)->zeroOrMoreTimes()->andReturnSelf();
         $builder->expects('get')->andReturn(new Collection([
             (object) [
                 'id' => 1,

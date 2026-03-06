@@ -26,7 +26,8 @@ Your support allows me to keep this package free, up-to-date and maintainable. A
 
 ## Requirements
 
-* Laravel 11 or later.
+* PHP 8.3 or later
+* Laravel 12 or later.
 
 ## Installation
 
@@ -459,10 +460,14 @@ Users may swap an invalid token with a valid one in the URL to bypass token veri
 - Use the [Token payload](#payloads) to validate the data before proceeding.
 - Use a [signed route](https://laravel.com/docs/11.x/urls#signed-urls) to avoid changing the URL parameters.
 
-Depending on the action being used with the Token, one could better than the other. For example, if you expect high request volume, the signed route could be great to not hit the application cache or database. On the other hand, the Token payload can be a great solution if you need complex or private information not suited for a URL Query and always get correct data.
+Depending on the action being used with the Token, one could be better than the other. For example, if you expect high request volume, the signed route could be great to not hit the application cache or database. On the other hand, the Token payload can be a great solution if you need complex or private information not suited for a URL Query and always get correct data.
+
+### Store obfuscation
+
+The store name in the URL is not obfuscated, which may show which type of services the application is running under. If this is undesired, the store name can be either encoded or mapped.
 
 # License
 
-This specific package version is licensed under the terms of the [MIT License](LICENSE.md), at time of publishing.
+This specific package version is licensed under the terms of the [MIT License](LICENSE.md), at the time of publishing.
 
-[Laravel](https://laravel.com) is a Trademark of [Taylor Otwell](https://github.com/TaylorOtwell/). Copyright © 2011-2025 Laravel LLC.
+[Laravel](https://laravel.com) is a Trademark of [Taylor Otwell](https://github.com/TaylorOtwell/). Copyright © 2011–2026 Laravel LLC.
